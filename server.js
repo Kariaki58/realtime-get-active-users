@@ -16,17 +16,20 @@ const io = new Server(server, {
 const activeIPs = new Set(); // Store unique IPs
 
 io.on("connection", (socket) => {
-    const clientIP = socket.handshake.address; // Get client's IP address
+    let clientIP = socket.handshake.headers["x-forwarded-for"] || socket.handshake.address;
+    
+    if (Array.isArray(clientIP)) {
+        clientIP = clientIP[0]; // Take the first IP if it's an array
+    }
 
     if (!activeIPs.has(clientIP)) {
         activeIPs.add(clientIP);
     }
 
-    io.emit("userCount", activeIPs.size); // Send unique view count
+    io.emit("userCount", activeIPs.size);
     console.log(`User connected: ${clientIP} | Active unique users: ${activeIPs.size}`);
 
     socket.on("disconnect", () => {
-        // Check if any other sockets from the same IP are still connected
         const remainingConnections = Array.from(io.sockets.sockets.values()).some(
             (s) => s.handshake.address === clientIP
         );
