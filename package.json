@@ -1,4 +1,13 @@
 {
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start:dev": "nodemon server.js",
+    "start": "node server.js",
+    "test": "jest"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
